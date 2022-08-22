@@ -1,10 +1,12 @@
 package com.training;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 public class MyClass {
 
@@ -18,13 +20,31 @@ public class MyClass {
 		String password = "tiger";
 		Connection con=DriverManager.getConnection(url, userName, password); 
 		
-		Statement stmt = con.createStatement();
-		
-		ResultSet rs =  stmt.executeQuery("select * from product");
-		
-		while(rs.next()) {
-			System.out.println(rs.getString(1)+":"+rs.getString(2)+":"+rs.getInt(4));
+		if(con != null) {
+			System.out.println("Connected Successfully");
 		}
+		else {
+			System.out.println("Connection Refused");
+		}
+		
+		//Statement stmt = con.createStatement();
+		
+		String prdId= "EL101";
+		String prdName="Test";
+		
+		CallableStatement cs = con.prepareCall(" {? = call GETPRICE(?)}");
+		
+		cs.registerOutParameter(1, Types.INTEGER);
+		cs.setString(2, prdId);
+		cs.execute();
+		
+		System.out.println("Price is: "+cs.getInt(1));
+		
+		//ResultSet rs =  stmt.executeQuery("select * from product");
+		
+		//while(rs.next()) {
+			//System.out.println(rs.getString(1)+":"+rs.getString(2)+":"+rs.getInt(4));
+		//}
 
 	}
 
